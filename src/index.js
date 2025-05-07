@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import salesRoutes from './routes/sales.js';
+import cors from 'cors';
 
 dotenv.config();
 
