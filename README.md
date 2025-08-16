@@ -1,6 +1,6 @@
-Sales API
+# Product Inventory API - Express.js Backend
 
-A RESTful API built with Express.js and MySQL for managing sales data. This backend provides endpoints for creating, reading, updating, and deleting sales records.
+A RESTful API built with Express.js and MySQL for managing a product inventory. This backend provides endpoints for creating, reading, updating, and deleting products.
 
 ## Table of Contents
 
