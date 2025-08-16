@@ -40,7 +40,7 @@ A RESTful API built with Express.js and MySQL for managing sales data. This back
 1.  **Clone the repository**:
 
     ```bash
-    git clone [https://github.com/your-username/sales-api.git](https://github.com/Cema2019/sales-api.git)
+    git clone https://github.com/Cema2019/sales-api.git
     cd sales-api
     ```
 
