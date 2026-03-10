@@ -1,139 +1,260 @@
-# Product Inventory API - Express.js Backend
+# Sales API — Express + MySQL Backend
 
-A RESTful API built with Express.js and MySQL for managing a product inventory. This backend provides endpoints for creating, reading, updating, and deleting products.
+A RESTful API built with **Node.js, Express, and MySQL** for managing sales records.  
+The project follows a **layered architecture** separating routes, controllers, services, and repositories for better scalability and maintainability.
 
-## Table of Contents
+---
 
--   Features
--   Technologies
--   Setup
--   API Endpoints
--   Database Schema
--   Usage
+# Features
 
-## Features
+- Full CRUD API for sales records
+- Layered architecture (Routes → Controllers → Services → Repositories)
+- MySQL connection pool using `mysql2`
+- Automatic total calculation (`price + delivery`)
+- Centralized error handling middleware
+- CORS enabled for frontend applications
+- Separation of HTTP logic and database logic
 
--   CRUD operations for sales records.
--   Calculates total cost (price + delivery) for each sale.
--   Input validation for creating and updating sales.
--   CORS support for cross-origin requests.
--   Error handling with appropriate HTTP status codes and messages.
+---
 
-## Technologies
+# Technologies
 
--   **Node.js**: JavaScript runtime.
--   **Express.js**: Web framework for building the API.
--   **MySQL**: Relational database for storing sales data.
--   **dotenv**: For managing environment variables.
--   **CORS**: Middleware for enabling cross-origin requests.
+### Backend
 
-## Setup
+- Node.js
+- Express.js
+- MySQL
+- mysql2
+- dotenv
+- cors
 
-### Prerequisites
+---
 
--   Node.js (v16 or higher)
--   MySQL (v8 or higher)
--   Git
+# Project Structure
 
-### Installation
+```
+src
+│
+├── controllers
+│ └── sales.controller.js
+│
+├── services
+│ └── sales.service.js
+│
+├── repositories
+│ └── sales.repository.js
+│
+├── routes
+│ └── sales.js
+│
+├── db
+│ └── pool.js
+│
+└── index.js
+```
 
-1.  **Clone the repository**:
+### Layer Responsibilities
 
-    ```bash
-    git clone https://github.com/Cema2019/sales-api.git
-    cd sales-api
-    ```
+**Routes**
+- Define HTTP endpoints
+- Forward requests to controllers
 
-2.  **Install dependencies**:
+**Controllers**
+- Handle Express request/response
+- Call services
 
-    ```bash
-    npm install
-    ```
+**Services**
+- Contain business logic
+- Coordinate repositories
 
-3.  **Set up the database**:
-    -   Create a MySQL database (e.g., sales\_db).
-    -   Run the following SQL to create the sales table:
+**Repositories**
+- Execute SQL queries
+- Communicate with MySQL
 
-        ```sql
-        CREATE TABLE sales (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          price DECIMAL(10, 2) NOT NULL,
-          delivery DECIMAL(10, 2) NOT NULL
-        );
-        ```
+**Database Pool**
+- Centralized MySQL connection management
 
-4.  **Configure environment variables**:
-    -   Create a .env file in the root directory.
-    -   Add the following variables (replace with your MySQL credentials):
+---
 
-        ```plaintext
-        PORT=3000
-        DB_HOST=localhost
-        DB_USER=your_mysql_user
-        DB_PASSWORD=your_mysql_password
-        DB_NAME=music_db
-        ```
+# Setup
 
-5.  **Start the server**:
+## Prerequisites
 
-    ```bash
-    npm start
-    ```
+- Node.js v18+
+- MySQL v8+
+- Git
 
-    The API will be running at http://localhost:3000.
+---
 
-## API Endpoints
+# Installation
 
-All endpoints are prefixed with /api/sales.
+Clone the repository
 
-<table style="min-width: 125px"><colgroup><col style="min-width: 25px"><col style="min-width: 25px"><col style="min-width: 25px"><col style="min-width: 25px"><col style="min-width: 25px"></colgroup><tbody><tr class="border-border"><th colspan="1" rowspan="1"><p dir="ltr">Method</p></th><th colspan="1" rowspan="1"><p dir="ltr">Endpoint</p></th><th colspan="1" rowspan="1"><p dir="ltr">Description</p></th><th colspan="1" rowspan="1"><p dir="ltr">Request Body</p></th><th colspan="1" rowspan="1"><p dir="ltr">Response</p></th></tr><tr class="border-border"><td colspan="1" rowspan="1"><p dir="ltr">GET</p></td><td colspan="1" rowspan="1"><p><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">/</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Retrieve all sales records</p></td><td colspan="1" rowspan="1"><p dir="ltr">None</p></td><td colspan="1" rowspan="1"><p dir="ltr">Array of sales objects <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ id, name, price, delivery, TOTAL }</span></p></td></tr><tr class="border-border"><td colspan="1" rowspan="1"><p dir="ltr">GET</p></td><td colspan="1" rowspan="1"><p dir="ltr"><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">/:id</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Retrieve a sale by ID</p></td><td colspan="1" rowspan="1"><p dir="ltr">None</p></td><td colspan="1" rowspan="1"><p dir="ltr">Sale object or <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ error: "Sale not found" }</span> (404)</p></td></tr><tr class="border-border"><td colspan="1" rowspan="1"><p dir="ltr">POST</p></td><td colspan="1" rowspan="1"><p><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">/</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Create a new sale</p></td><td colspan="1" rowspan="1"><p dir="ltr"><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ name: string, price: number, delivery: number }</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Created sale object (201) or <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ error: "..." }</span> (400)</p></td></tr><tr class="border-border"><td colspan="1" rowspan="1"><p dir="ltr">PUT</p></td><td colspan="1" rowspan="1"><p dir="ltr"><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">/:id</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Update a sale by ID</p></td><td colspan="1" rowspan="1"><p dir="ltr"><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ name: string, price: number, delivery: number }</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Updated sale object or <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ error: "..." }</span> (400, 404)</p></td></tr><tr class="border-border"><td colspan="1" rowspan="1"><p dir="ltr">DELETE</p></td><td colspan="1" rowspan="1"><p dir="ltr"><span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">/:id</span></p></td><td colspan="1" rowspan="1"><p dir="ltr">Delete a sale by ID</p></td><td colspan="1" rowspan="1"><p dir="ltr">None</p></td><td colspan="1" rowspan="1"><p dir="ltr">No content (204) or <span class="text-sm px-1 rounded-sm !font-mono bg-sunset/10 text-rust dark:bg-dawn/10 dark:text-dawn">{ error: "Sale not found" }</span> (404)</p></td></tr></tbody></table>
 
-### Example Requests
+git clone https://github.com/Cema2019/sales-api.git
 
--   **Get all sales**:
+cd sales-api
 
-    ```bash
-    curl http://localhost:3000/api/sales
-    ```
 
-    Response:
+Install dependencies
 
-    ```json
-    [
-      { "id": 1, "name": "Product A", "price": 100, "delivery": 10, "TOTAL": 110 },
-      { "id": 2, "name": "Product B", "price": 200, "delivery": 20, "TOTAL": 220 }
-    ]
-    ```
 
--   **Create a sale**:
+npm install
 
-    ```bash
-    curl -X POST http://localhost:3000/api/sales -H "Content-Type: application/json" -d '{"name":"Product C","price":150,"delivery":15}'
-    ```
 
-    Response:
+---
 
-    ```json
-    { "id": 3, "name": "Product C", "price": 150, "delivery": 15, "TOTAL": 165 }
-    ```
+# Database Setup
 
-## Database Schema
+Create the database
 
-The sales table has the following structure:
 
-```sql
+CREATE DATABASE sales_db;
+
+
+Create the table
+
+```
 CREATE TABLE sales (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  price DECIMAL(10, 2) NOT NULL,
-  delivery DECIMAL(10, 2) NOT NULL
+id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(255) NOT NULL,
+price DECIMAL(10,2) NOT NULL,
+delivery DECIMAL(10,2) NOT NULL
 );
 ```
 
-## Usage
+---
 
--   Use tools like Postman or cURL to test the API endpoints.
--   Integrate with a frontend application (e.g., React, Vue) to manage sales via a UI.
--   Ensure CORS is configured if the frontend is hosted on a different domain.
+# Environment Variables
 
+Create a `.env` file in the root folder
+
+```
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=yourpassword
+DB_NAME=sales_db
+```
+
+---
+
+# Run the Server
+
+
+npm start
+
+
+Server runs at
+
+
+http://localhost:3000
+
+
+---
+
+# API Base URL
+
+
+http://localhost:3000/api/sales
+
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Description |
+|------|------|------|
+| GET | /api/sales | Get all sales |
+| GET | /api/sales/:id | Get sale by ID |
+| POST | /api/sales | Create sale |
+| PUT | /api/sales/:id | Update sale |
+| DELETE | /api/sales/:id | Delete sale |
+
+---
+
+# Example Response
+
+
+GET /api/sales
+```
+[{
+"id": 1,
+"name": "Laptop",
+"price": 1000,
+"delivery": 20,
+"total": 1020
+}]
+```
+
+---
+
+# Create Sale Example
+
+
+POST /api/sales
+
+
+Request
+
+```
+{
+"name": "Keyboard",
+"price": 50,
+"delivery": 5
+}
+```
+
+Response
+
+```
+{
+"id": 2,
+"name": "Keyboard",
+"price": 50,
+"delivery": 5,
+"total": 55
+}
+```
+
+---
+
+# Error Handling
+
+Example error response
+
+```
+{
+"error": "Sale not found"
+}
+```
+
+HTTP status codes used
+
+| Code | Meaning |
+|-----|-----|
+| 200 | Success |
+| 201 | Resource created |
+| 204 | Resource deleted |
+| 400 | Bad request |
+| 404 | Resource not found |
+| 500 | Internal server error |
+
+---
+
+# Example cURL Requests
+
+Get all sales
+
+
+curl http://localhost:3000/api/sales
+
+
+Create sale
+
+```
+curl -X POST http://localhost:3000/api/sales
+
+-H "Content-Type: application/json"
+-d '{"name":"Mouse","price":25,"delivery":5}'
+```
