@@ -1,13 +1,13 @@
 # Sales API — Express + MySQL Backend
 
-A RESTful API built with **Node.js, Express, and MySQL** for managing sales records.  
+A RESTful API built with **Node.js, Express, and MySQL** for managing Store inventory records.  
 The project follows a **layered architecture** separating routes, controllers, services, and repositories for better scalability and maintainability.
 
 ---
 
 # Features
 
-- Full CRUD API for sales records
+- Full CRUD API for inventory records
 - Layered architecture (Routes → Controllers → Services → Repositories)
 - MySQL connection pool using `mysql2`
 - Automatic total calculation (`price + delivery`)
